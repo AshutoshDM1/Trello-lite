@@ -1,0 +1,64 @@
+name: Deploy Backend (DO VM)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/server/**'
+      - '.github/workflows/deploy.yaml'
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-backend
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: SSH deploy backend
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          key: ${{ secrets.DO_SSH_KEY }}
+          port: ${{ secrets.DO_SSH_PORT || 22 }}
+          script_stop: true
+          script: |
+            set -euo pipefail
+
+            # Ensure Node, pnpm, Bun are available on PATH
+            export PATH="$HOME/.bun/bin:$HOME/.local/share/pnpm:$HOME/.nvm/versions/node/$(ls $HOME/.nvm/versions/node 2>/dev/null | tail -n 1)/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+
+            # Load nvm if present
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+            [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
+
+            cd "$HOME/Lead-CRM"
+
+            git stash push -u -m "ci-deploy-$(date -u +%Y%m%dT%H%M%SZ)" || true
+            git fetch origin main
+            git pull --ff-only origin main
+
+            if command -v pnpm >/dev/null 2>&1; then
+              pnpm install --frozen-lockfile
+              pnpm --filter server build
+            elif command -v bun >/dev/null 2>&1; then
+              bun install --frozen-lockfile
+              bun --filter server build
+            else
+              npm install
+              npm --prefix apps/server run build
+            fi
+
+            if ! command -v pm2 >/dev/null 2>&1; then
+              echo "pm2 not found on PATH. PATH=$PATH"
+              exit 127
+            fi
+            pm2 -v
+
+            pm2 restart lead-erp --update-env || pm2 restart server --update-env
+            pm2 save
