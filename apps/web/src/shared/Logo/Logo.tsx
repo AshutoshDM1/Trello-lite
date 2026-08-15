@@ -21,7 +21,7 @@ export function Logo({
   imageClassName = '',
   textClassName = '',
   showText = true,
-  text = 'Lead ERP',
+  text = 'Trello Lite',
   subtitle,
   size = 'md',
   onClick,
@@ -35,7 +35,7 @@ export function Logo({
     >
       <img
         src="/logo.webp"
-        alt="Lead ERP Logo"
+        alt="Trello Lite Logo"
         className={`object-contain rounded-lg shrink-0 ${currentSize.img} ${imageClassName}`}
       />
       {showText && (

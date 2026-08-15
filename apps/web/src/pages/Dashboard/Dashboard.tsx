@@ -8,7 +8,6 @@ import { Sidebar } from './components/Sidebar';
 import { DashboardOverview } from './components/DashboardOverview';
 import { UserProfile } from './components/UserProfile';
 import { UsersDirectory } from './components/UsersDirectory';
-import { LeadsDirectory } from './components/LeadsDirectory';
 
 export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -82,16 +81,6 @@ export default function Dashboard() {
             index
             element={
               <DashboardOverview usersCount={usersList?.length} isUsersLoading={isUsersLoading} />
-            }
-          />
-          <Route
-            path="leads"
-            element={
-              <LeadsDirectory
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                getInitials={getInitials}
-              />
             }
           />
           <Route

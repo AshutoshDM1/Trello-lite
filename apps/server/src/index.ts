@@ -26,16 +26,15 @@ const corsOptions = {
   ],
   exposedHeaders: ['Set-Cookie'],
 };
-
-// Enable CORS and parsing of JSON request bodies
 app.use(cors(corsOptions));
+
+app.all('/api/auth/*splat', toNodeHandler(auth));
+// Enable CORS and parsing of JSON request bodies
 app.use(express.json());
 
 // Interactive Swagger API documentation
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-app.all('/api/auth/*splat', toNodeHandler(auth));
 
 // Register API routes
 app.use('/api/v1', router);
@@ -43,7 +42,7 @@ app.use('/api/v1', router);
 // Root API health and welcome route
 app.get('/', (req, res) => {
   res.json({
-    message: 'Welcome to Lead CRM Backend API!',
+    message: 'Welcome to Trello Lite Backend API!',
     timestamp: new Date().toISOString(),
     status: 'healthy',
     docs: '/docs',

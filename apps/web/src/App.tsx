@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Home from './pages/Home/Home';
 import Dashboard from './pages/Dashboard/Dashboard';
-import PublicLeadCapture from './pages/PublicLeadCapture/PublicLeadCapture';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { ThemeProvider } from './components/theme-provider';
 import { ThemeToggle } from './components/theme-toggle';
@@ -19,14 +18,11 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="dark" storageKey="lead-crm-theme">
+      <ThemeProvider defaultTheme="dark" storageKey="trello-lite-theme">
         <BrowserRouter>
           <Routes>
             {/* Public Home Route (Login / Landing) */}
             <Route path="/" element={<Home />} />
-
-            {/* Public Lead Capture Form Route */}
-            <Route path="/capture" element={<PublicLeadCapture />} />
 
             {/* Protected Dashboard Route */}
             <Route element={<ProtectedRoute />}>

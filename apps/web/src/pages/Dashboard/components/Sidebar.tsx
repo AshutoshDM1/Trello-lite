@@ -3,7 +3,6 @@ import {
   LayoutDashboard,
   User as UserIcon,
   Users as UsersIcon,
-  FolderKanban,
   LogOut,
   Menu,
   X,
@@ -37,7 +36,6 @@ export function Sidebar({
   const navigate = useNavigate();
 
   const isOverview = location.pathname === '/dashboard' || location.pathname === '/dashboard/';
-  const isLeads = location.pathname.startsWith('/dashboard/leads');
   const isProfile = location.pathname.startsWith('/dashboard/profile');
   const isUsers = location.pathname.startsWith('/dashboard/users');
 
@@ -81,21 +79,6 @@ export function Sidebar({
             >
               <LayoutDashboard className="size-4" />
               <span>Dashboard</span>
-            </button>
-
-            <button
-              onClick={() => {
-                navigate('/dashboard/leads');
-                setMobileSidebarOpen(false);
-              }}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
-                isLeads
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-              }`}
-            >
-              <FolderKanban className="size-4" />
-              <span>Leads</span>
             </button>
 
             <button

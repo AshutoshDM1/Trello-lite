@@ -5,7 +5,7 @@ import db from '../utils/db.js';
 import { origins } from '../utils/origins.js';
 import * as authSchema from '../db/auth-schema.js';
 
-const isProduction = process.env.BETTER_AUTH_URL === 'https://api-vedaz.elitedev.space';
+const isProduction = process.env.NODE_ENV === 'production';
 
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
@@ -59,5 +59,13 @@ export const auth = betterAuth({
       redirect: process.env.FRONTEND_URL,
     };
   },
-  database: drizzleAdapter(db, { provider: 'pg', schema: authSchema }),
+  database: drizzleAdapter(db, {
+    provider: 'pg',
+    schema: {
+      user: authSchema.user,
+      session: authSchema.session,
+      account: authSchema.account,
+      verification: authSchema.verification,
+    },
+  }),
 });

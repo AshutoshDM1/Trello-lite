@@ -132,8 +132,7 @@ export function UserProfile({
             <Command className="size-4 text-primary" /> Keyboard Shortcuts & Hotkeys
           </h3>
           <p className="text-xs text-muted-foreground">
-            Quick keyboard navigation shortcuts available across the portal and leads pipeline
-            table.
+            Quick keyboard navigation shortcuts available across the portal.
           </p>
         </div>
 
@@ -148,97 +147,11 @@ export function UserProfile({
               <kbd className="px-2 py-0.5 text-[11px] font-mono font-semibold text-foreground bg-background rounded border border-border shadow-xs">
                 K
               </kbd>
-              <span className="text-xs text-muted-foreground mx-0.5">or</span>
-              <kbd className="px-2 py-0.5 text-[11px] font-mono font-semibold text-foreground bg-background rounded border border-border shadow-xs">
-                /
-              </kbd>
             </div>
           </div>
 
           <div className="flex items-center justify-between p-3 rounded-lg bg-muted/40 border border-border">
-            <span className="text-xs font-medium text-foreground">Open Add Lead Modal</span>
-            <div className="flex items-center gap-1">
-              <kbd className="px-2 py-0.5 text-[11px] font-mono font-semibold text-foreground bg-background rounded border border-border shadow-xs">
-                Alt
-              </kbd>
-              <span className="text-xs text-muted-foreground">+</span>
-              <kbd className="px-2 py-0.5 text-[11px] font-mono font-semibold text-foreground bg-background rounded border border-border shadow-xs">
-                N
-              </kbd>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/40 border border-border">
-            <span className="text-xs font-medium text-foreground">Navigate Rows Down / Up</span>
-            <div className="flex items-center gap-1">
-              <kbd className="px-2 py-0.5 text-[11px] font-mono font-semibold text-foreground bg-background rounded border border-border shadow-xs">
-                J / K
-              </kbd>
-              <span className="text-xs text-muted-foreground mx-0.5">or</span>
-              <kbd className="px-2 py-0.5 text-[11px] font-mono font-semibold text-foreground bg-background rounded border border-border shadow-xs">
-                ↓ / ↑
-              </kbd>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/40 border border-border">
-            <span className="text-xs font-medium text-foreground">Open Selected Lead Notes</span>
-            <div className="flex items-center gap-1">
-              <kbd className="px-2 py-0.5 text-[11px] font-mono font-semibold text-foreground bg-background rounded border border-border shadow-xs">
-                Enter
-              </kbd>
-              <span className="text-xs text-muted-foreground mx-0.5">or</span>
-              <kbd className="px-2 py-0.5 text-[11px] font-mono font-semibold text-foreground bg-background rounded border border-border shadow-xs">
-                Space
-              </kbd>
-              <span className="text-xs text-muted-foreground mx-0.5">or</span>
-              <kbd className="px-2 py-0.5 text-[11px] font-mono font-semibold text-foreground bg-background rounded border border-border shadow-xs">
-                O
-              </kbd>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/40 border border-border">
-            <span className="text-xs font-medium text-foreground">Next / Prev Page</span>
-            <div className="flex items-center gap-1">
-              <kbd className="px-2 py-0.5 text-[11px] font-mono font-semibold text-foreground bg-background rounded border border-border shadow-xs">
-                [
-              </kbd>
-              <span className="text-xs text-muted-foreground mx-0.5">/</span>
-              <kbd className="px-2 py-0.5 text-[11px] font-mono font-semibold text-foreground bg-background rounded border border-border shadow-xs">
-                ]
-              </kbd>
-              <span className="text-xs text-muted-foreground mx-0.5">or</span>
-              <kbd className="px-2 py-0.5 text-[11px] font-mono font-semibold text-foreground bg-background rounded border border-border shadow-xs">
-                ← / →
-              </kbd>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/40 border border-border">
-            <span className="text-xs font-medium text-foreground">Export Pipeline to CSV</span>
-            <div className="flex items-center gap-1">
-              <kbd className="px-2 py-0.5 text-[11px] font-mono font-semibold text-foreground bg-background rounded border border-border shadow-xs">
-                Alt
-              </kbd>
-              <span className="text-xs text-muted-foreground">+</span>
-              <kbd className="px-2 py-0.5 text-[11px] font-mono font-semibold text-foreground bg-background rounded border border-border shadow-xs">
-                E
-              </kbd>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/40 border border-border">
-            <span className="text-xs font-medium text-foreground">Delete Selected Lead</span>
-            <div className="flex items-center gap-1">
-              <kbd className="px-2 py-0.5 text-[11px] font-mono font-semibold text-foreground bg-background rounded border border-border shadow-xs">
-                Del
-              </kbd>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/40 border border-border">
-            <span className="text-xs font-medium text-foreground">Close Drawers & Modals</span>
+            <span className="text-xs font-medium text-foreground">Close Modals</span>
             <div className="flex items-center gap-1">
               <kbd className="px-2 py-0.5 text-[11px] font-mono font-semibold text-foreground bg-background rounded border border-border shadow-xs">
                 Esc

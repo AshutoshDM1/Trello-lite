@@ -12,10 +12,7 @@ const formatPath = (p: string) => p.replace(/\\/g, '/');
 
 export default defineConfig({
   out: formatPath(path.join(__dirname, 'drizzle')),
-  schema: [
-    formatPath(path.join(__dirname, 'src/db/schema.ts')),
-    formatPath(path.join(__dirname, 'src/db/auth-schema.ts')),
-  ],
+  schema: formatPath(path.join(__dirname, 'src/db/schema.ts')),
   dialect: 'postgresql',
   dbCredentials: {
     url: process.env.DATABASE_URL as string,
