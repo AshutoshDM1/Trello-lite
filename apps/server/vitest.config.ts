@@ -6,8 +6,11 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     include: ['src/**/__tests__/**/*.test.ts'],
+    exclude: ['dist/**', 'node_modules/**'],
     env: {
-      DATABASE_URL: 'postgres://mock:mock@localhost:5432/mock_db',
+      DATABASE_URL:
+        process.env.DATABASE_URL ||
+        'postgresql://neondb_owner:npg_dwtvJCP3U7Ti@ep-late-sun-azh9fdkk.c-3.ap-southeast-1.aws.neon.tech/neondb?sslmode=require',
     },
     coverage: {
       provider: 'v8',

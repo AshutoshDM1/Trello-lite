@@ -93,17 +93,6 @@ export default function Auth() {
             <p className="text-xs text-muted-foreground font-mono">CEO, Acme Inc</p>
           </div>
         </div>
-        <div className="text-xs text-muted-foreground">
-          Built for{' '}
-          <a
-            href="https://digitalheroesco.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-medium text-foreground underline underline-offset-4 hover:opacity-80 transition-opacity"
-          >
-            Digital Heroes Training Task
-          </a>
-        </div>
       </div>
 
       {/* Right Column: Form Section */}
@@ -253,19 +242,6 @@ export default function Auth() {
             )}
             <span>Google</span>
           </Button>
-
-          {/* Footer Credit Line */}
-          <p className="text-center text-xs text-muted-foreground pt-4">
-            Built for{' '}
-            <a
-              href="https://digitalheroesco.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium text-foreground underline underline-offset-4 hover:opacity-80 transition-opacity"
-            >
-              Digital Heroes Training Task
-            </a>
-          </p>
         </div>
       </div>
     </div>

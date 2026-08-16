@@ -8,6 +8,7 @@
     "build": "tsc -b",
     "start": "node dist/src/index.js",
     "db:push": "drizzle-kit push --config=drizzle.config.ts",
+    "seed": "tsx src/seed/seed.ts",
     "test": "npx vitest run",
     "test:watch": "npx vitest",
     "lint": "eslint ."

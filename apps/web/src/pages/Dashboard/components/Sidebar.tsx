@@ -62,7 +62,7 @@ export function Sidebar({
       >
         <div className="p-6 space-y-6">
           {/* Brand Header */}
-          <Logo size="lg" subtitle="Workspace Portal" />
+          <Logo size="lg" />
 
           {/* Navigation Links */}
           <nav className="space-y-1">
@@ -146,18 +146,6 @@ export function Sidebar({
             <LogOut className="size-3.5" />
             Sign Out
           </Button>
-
-          <div className="text-center text-[11px] text-muted-foreground pt-2 border-t border-border/40">
-            Built for{' '}
-            <a
-              href="https://digitalheroesco.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium text-foreground underline underline-offset-2 hover:opacity-80 transition-opacity"
-            >
-              Digital Heroes Training Task
-            </a>
-          </div>
         </div>
       </aside>
     </>
