@@ -14,6 +14,12 @@ export const auth = betterAuth({
     allowedHosts: origins,
   },
   trustedOrigins: origins,
+  account: {
+    accountLinking: {
+      enabled: true,
+      trustedProviders: ['google'],
+    },
+  },
   advanced: {
     useSecureCookies: isProduction,
     crossSubDomainCookies: {
