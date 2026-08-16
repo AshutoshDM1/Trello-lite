@@ -29,6 +29,10 @@ export const swaggerDocument = {
       description: 'Task creation, modification, position movement, and priority filtering',
     },
     {
+      name: 'Analytics',
+      description: 'Workspace overview metrics, column breakdown, and priority statistics',
+    },
+    {
       name: 'Users & RBAC',
       description: 'User directory and Role-Based Access Control administration',
     },
@@ -268,6 +272,15 @@ export const swaggerDocument = {
           200: { description: 'Task moved successfully' },
           400: { description: 'Validation error or target column does not exist' },
           404: { description: 'Task not found' },
+        },
+      },
+    },
+    '/api/v1/analytics/overview': {
+      get: {
+        tags: ['Analytics'],
+        summary: 'Fetch workspace task metrics, column breakdown, and priority statistics',
+        responses: {
+          200: { description: 'Overview analytics data retrieved successfully' },
         },
       },
     },

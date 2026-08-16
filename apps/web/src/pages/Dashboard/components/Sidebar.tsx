@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
+  Kanban,
   User as UserIcon,
   Users as UsersIcon,
   LogOut,
@@ -35,7 +36,11 @@ export function Sidebar({
   const location = useLocation();
   const navigate = useNavigate();
 
-  const isOverview = location.pathname === '/dashboard' || location.pathname === '/dashboard/';
+  const isOverview =
+    location.pathname === '/dashboard' ||
+    location.pathname === '/dashboard/' ||
+    location.pathname.startsWith('/dashboard/overview');
+  const isBoard = location.pathname.startsWith('/dashboard/board');
   const isProfile = location.pathname.startsWith('/dashboard/profile');
   const isUsers = location.pathname.startsWith('/dashboard/users');
 
@@ -78,7 +83,22 @@ export function Sidebar({
               }`}
             >
               <LayoutDashboard className="size-4" />
-              <span>Dashboard</span>
+              <span>Overview</span>
+            </button>
+
+            <button
+              onClick={() => {
+                navigate('/dashboard/board');
+                setMobileSidebarOpen(false);
+              }}
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+                isBoard
+                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+              }`}
+            >
+              <Kanban className="size-4" />
+              <span>Task Board</span>
             </button>
 
             <button

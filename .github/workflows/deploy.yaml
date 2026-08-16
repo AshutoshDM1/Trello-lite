@@ -6,6 +6,7 @@ on:
     paths:
       - 'apps/server/**'
       - '.github/workflows/deploy.yaml'
+      - 'pnpm-lock.yaml'
   workflow_dispatch: {}
 
 concurrency:
@@ -37,7 +38,7 @@ jobs:
             [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
             [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
 
-            cd "$HOME/Lead-CRM"
+            cd "$HOME/Trello-lite" || cd "$HOME/Lead-CRM"
 
             git stash push -u -m "ci-deploy-$(date -u +%Y%m%dT%H%M%SZ)" || true
             git fetch origin main
@@ -60,5 +61,5 @@ jobs:
             fi
             pm2 -v
 
-            pm2 restart lead-erp --update-env || pm2 restart server --update-env
+            pm2 restart trello-lite --update-env || pm2 restart lead-erp --update-env || pm2 restart server --update-env
             pm2 save

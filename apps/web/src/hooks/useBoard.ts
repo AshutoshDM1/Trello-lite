@@ -1,0 +1,130 @@
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { api } from '../services/api';
+
+export type PriorityLevel = 'Low' | 'Medium' | 'High';
+
+export interface TaskItem {
+  id: string;
+  title: string;
+  description: string | null;
+  columnId: string;
+  priority: PriorityLevel;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ColumnItem {
+  id: string;
+  name: string;
+  boardId: string;
+  position: number;
+  tasks: TaskItem[];
+}
+
+export interface BoardData {
+  id: string;
+  name: string;
+  columns: ColumnItem[];
+}
+
+export interface CreateTaskPayload {
+  title: string;
+  description?: string;
+  columnId: string;
+  priority?: PriorityLevel;
+}
+
+export interface UpdateTaskPayload {
+  id: string;
+  title?: string;
+  description?: string | null;
+  columnId?: string;
+  priority?: PriorityLevel;
+}
+
+export interface MoveTaskPayload {
+  id: string;
+  columnId: string;
+}
+
+/**
+ * Query hook for board details with nested columns and tasks
+ */
+export function useBoardQuery(boardId: string = 'board_demo_1', priorityFilter?: string) {
+  return useQuery<BoardData>({
+    queryKey: ['board', boardId, priorityFilter || 'All'],
+    queryFn: async () => {
+      const params: Record<string, string> = {};
+      if (priorityFilter && priorityFilter !== 'All') {
+        params.priority = priorityFilter;
+      }
+      const response = await api.get(`/boards/${boardId}`, { params });
+      return response.data.data;
+    },
+    refetchOnWindowFocus: false,
+  });
+}
+
+/**
+ * Mutation hook to create a task
+ */
+export function useCreateTaskMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: CreateTaskPayload) => {
+      const response = await api.post('/tasks', payload);
+      return response.data.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] });
+    },
+  });
+}
+
+/**
+ * Mutation hook to update task details
+ */
+export function useUpdateTaskMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...payload }: UpdateTaskPayload) => {
+      const response = await api.patch(`/tasks/${id}`, payload);
+      return response.data.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] });
+    },
+  });
+}
+
+/**
+ * Mutation hook to move a task to another column
+ */
+export function useMoveTaskMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, columnId }: MoveTaskPayload) => {
+      const response = await api.patch(`/tasks/${id}/move`, { columnId });
+      return response.data.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] });
+    },
+  });
+}
+
+/**
+ * Mutation hook to delete a task
+ */
+export function useDeleteTaskMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (taskId: string) => {
+      const response = await api.delete(`/tasks/${taskId}`);
+      return response.data.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] });
+    },
+  });
+}

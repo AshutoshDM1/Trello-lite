@@ -8,6 +8,7 @@ import { Sidebar } from './components/Sidebar';
 import { DashboardOverview } from './components/DashboardOverview';
 import { UserProfile } from './components/UserProfile';
 import { UsersDirectory } from './components/UsersDirectory';
+import BoardPage from '../Board/BoardPage';
 
 export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -77,12 +78,9 @@ export default function Dashboard() {
       {/* Main Content Pane with React Router Routes */}
       <main className="flex-1 min-w-0 h-full bg-background p-6 md:p-10 overflow-y-auto">
         <Routes>
-          <Route
-            index
-            element={
-              <DashboardOverview usersCount={usersList?.length} isUsersLoading={isUsersLoading} />
-            }
-          />
+          <Route index element={<DashboardOverview />} />
+          <Route path="overview" element={<DashboardOverview />} />
+          <Route path="board" element={<BoardPage />} />
           <Route
             path="profile"
             element={

@@ -19,6 +19,8 @@ describe('asyncHandler Utility (Unit Tests)', () => {
   });
 
   it('should catch errors thrown by controller handler and respond with 500 status', async () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
     const error = new Error('Async database failure');
     const mockHandler = vi.fn().mockRejectedValue(error);
     const wrapped = asyncHandler(mockHandler);
@@ -33,5 +35,7 @@ describe('asyncHandler Utility (Unit Tests)', () => {
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({ message: 'Internal server error' });
+
+    consoleSpy.mockRestore();
   });
 });
