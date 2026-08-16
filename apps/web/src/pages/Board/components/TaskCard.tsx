@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, Edit2, Trash2, ArrowRightLeft } from 'lucide-react';
+import { Calendar, Edit2, Trash2, ArrowRightLeft, GripVertical } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { TaskItem, ColumnItem } from '@/hooks/useBoard';
@@ -33,6 +34,8 @@ export function TaskCard({
   const priorityVariant =
     task.priority === 'High' ? 'high' : task.priority === 'Medium' ? 'medium' : 'low';
 
+  const [isDragging, setIsDragging] = useState(false);
+
   return (
     <motion.div
       layout
@@ -40,7 +43,23 @@ export function TaskCard({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
-      className="group relative bg-card hover:bg-card/95 border border-border/80 hover:border-primary/40 rounded-xl p-4 shadow-xs hover:shadow-md transition-all space-y-3"
+      draggable
+      onDragStart={(e: React.DragEvent) => {
+        setIsDragging(true);
+        e.dataTransfer.setData(
+          'text/plain',
+          JSON.stringify({ taskId: task.id, fromColumnId: task.columnId }),
+        );
+        e.dataTransfer.effectAllowed = 'move';
+      }}
+      onDragEnd={() => {
+        setIsDragging(false);
+      }}
+      className={`group relative bg-card hover:bg-card/95 border rounded-xl p-4 shadow-xs hover:shadow-md transition-all space-y-3 cursor-grab active:cursor-grabbing ${
+        isDragging
+          ? 'opacity-40 border-dashed border-primary scale-98 ring-2 ring-primary/20'
+          : 'border-border/80 hover:border-primary/40'
+      }`}
     >
       {/* Header: Priority & Quick Actions */}
       <div className="flex items-center justify-between gap-2">

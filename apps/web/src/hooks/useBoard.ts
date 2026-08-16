@@ -107,7 +107,53 @@ export function useMoveTaskMutation() {
       const response = await api.patch(`/tasks/${id}/move`, { columnId });
       return response.data.data;
     },
-    onSuccess: () => {
+    onMutate: async ({ id, columnId }) => {
+      await queryClient.cancelQueries({ queryKey: ['board'] });
+      const previousQueries = queryClient.getQueriesData<BoardData>({ queryKey: ['board'] });
+
+      queryClient.setQueriesData<BoardData>({ queryKey: ['board'] }, (old) => {
+        if (!old) return old;
+        let movedTask: TaskItem | undefined;
+
+        const newColumns = old.columns.map((col) => {
+          const task = col.tasks.find((t) => t.id === id);
+          if (task) {
+            movedTask = { ...task, columnId };
+            return {
+              ...col,
+              tasks: col.tasks.filter((t) => t.id !== id),
+            };
+          }
+          return col;
+        });
+
+        if (movedTask) {
+          return {
+            ...old,
+            columns: newColumns.map((col) => {
+              if (col.id === columnId) {
+                return {
+                  ...col,
+                  tasks: [...col.tasks, movedTask!],
+                };
+              }
+              return col;
+            }),
+          };
+        }
+        return old;
+      });
+
+      return { previousQueries };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previousQueries) {
+        context.previousQueries.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['board'] });
     },
   });

@@ -1,4 +1,4 @@
-# 🚀 TaskFlow — Trello Lite
+# Trello-lite
 
 A modern, full-stack task management application built with **React 19**, **TypeScript**, **Tailwind CSS v4**, **Node.js Express**, **Drizzle ORM**, **Neon PostgreSQL**, and **Better Auth**.
 
@@ -25,7 +25,7 @@ A modern, full-stack task management application built with **React 19**, **Type
 
 ## 🌟 Overview
 
-**TaskFlow (Trello Lite)** allows teams to organize tasks visually across columns (_To Do_, _In Progress_, _Done_), filter by priority (_High_, _Medium_, _Low_), track pipeline analytics in real time, and manage task lifecycle with zero friction.
+**Trello-lite** allows teams to organize tasks visually across columns (_To Do_, _In Progress_, _Done_), filter by priority (_High_, _Medium_, _Low_), track pipeline analytics in real time, and manage task lifecycle with zero friction.
 
 ---
 
@@ -99,7 +99,7 @@ erDiagram
 
 ## 📡 REST API Reference
 
-All API routes are prefixed under `/api/v1`. Interactive documentation is available at `http://localhost:3000/docs`.
+All API routes are prefixed under `/api/v1`. Interactive documentation is available at `http://localhost:5000/docs`.
 
 | Method   | Endpoint                     | Description                                                      |
 | :------- | :--------------------------- | :--------------------------------------------------------------- |
@@ -123,13 +123,22 @@ All API routes are prefixed under `/api/v1`. Interactive documentation is availa
 
 ### Environment Variables
 
-Create `.env` inside `apps/server/.env`:
+#### Backend (`apps/server/.env`)
 
 ```env
-DATABASE_URL=postgresql://neondb_owner:npg_dwtvJCP3U7Ti@ep-late-sun-azh9fdkk.c-3.ap-southeast-1.aws.neon.tech/neondb?sslmode=require
-BETTER_AUTH_SECRET="6c934aabb5ac4646da469b245e2df18e26744d123d6173659a27e5f0877a9985"
-BETTER_AUTH_URL=http://localhost:3000
+PORT=5000
+DATABASE_URL=postgresql://<user>:<password>@<host>/<database>?sslmode=require
+BETTER_AUTH_SECRET="your-better-auth-secret-min-32-chars"
+BETTER_AUTH_URL=http://localhost:5000
 FRONTEND_URL=["http://localhost:5173"]
+GOOGLE_CLIENT_ID=********************
+GOOGLE_CLIENT_SECRET=********************
+```
+
+#### Frontend (`apps/web/.env`)
+
+```env
+VITE_BACKEND_URL=http://localhost:5000
 ```
 
 ### Installation & Setup
@@ -156,13 +165,13 @@ pnpm --filter server seed
 ### Running the Project
 
 ```bash
-# Start both backend server (port 3000) and frontend Vite dev server (port 5173) concurrently
+# Start both backend server and frontend Vite dev server concurrently
 pnpm dev
 ```
 
 - **Frontend App**: `http://localhost:5173`
-- **Backend API**: `http://localhost:3000`
-- **Swagger Docs**: `http://localhost:3000/docs`
+- **Backend API**: `http://localhost:5000`
+- **Swagger Docs**: `http://localhost:5000/docs`
 
 ---
 
