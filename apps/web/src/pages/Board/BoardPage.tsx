@@ -1,8 +1,11 @@
 import { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   useBoardQuery,
+  useBoardsListQuery,
+  useCreateBoardMutation,
   useCreateTaskMutation,
   useUpdateTaskMutation,
   useMoveTaskMutation,
@@ -16,27 +19,39 @@ import { BoardSkeleton } from './components/BoardSkeleton';
 import { CreateTaskModal } from './components/CreateTaskModal';
 import { EditTaskModal } from './components/EditTaskModal';
 import { DeleteTaskModal } from './components/DeleteTaskModal';
+import { CreateBoardModal } from './components/CreateBoardModal';
+import { SelectBoardModal } from './components/SelectBoardModal';
 
 export default function BoardPage() {
+  const { boardId: paramBoardId } = useParams<{ boardId?: string }>();
+  const navigate = useNavigate();
+
   const [searchQuery, setSearchQuery] = useState('');
   const [priorityFilter, setPriorityFilter] = useState('All');
   const [sortBy, setSortBy] = useState<SortOption>('created-desc');
 
   // Modal open states
+  const [isSelectBoardModalOpen, setIsSelectBoardModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isCreateBoardModalOpen, setIsCreateBoardModalOpen] = useState(false);
   const [createDefaultColumnId, setCreateDefaultColumnId] = useState<string | undefined>();
 
   const [editingTask, setEditingTask] = useState<TaskItem | null>(null);
   const [deletingTask, setDeletingTask] = useState<TaskItem | null>(null);
 
   // Queries & Mutations
+  const { data: boardsList = [] } = useBoardsListQuery();
+  const createBoardMutation = useCreateBoardMutation();
+
+  const activeBoardId = paramBoardId || (boardsList.length > 0 ? boardsList[0].id : 'board_demo_1');
+
   const {
     data: boardData,
     isLoading,
     isError,
     error,
     refetch,
-  } = useBoardQuery('board_demo_1', priorityFilter);
+  } = useBoardQuery(activeBoardId, priorityFilter);
 
   const createTaskMutation = useCreateTaskMutation();
   const updateTaskMutation = useUpdateTaskMutation();
@@ -44,6 +59,17 @@ export default function BoardPage() {
   const deleteTaskMutation = useDeleteTaskMutation();
 
   const columns = boardData?.columns || [];
+
+  const handleSelectBoard = (boardId: string) => {
+    navigate(`/dashboard/board/${boardId}`);
+  };
+
+  const handleCreateBoard = async (name: string) => {
+    const newBoard = await createBoardMutation.mutateAsync({ name });
+    if (newBoard?.id) {
+      navigate(`/dashboard/board/${newBoard.id}`);
+    }
+  };
 
   const handleOpenCreateModal = (columnId?: string) => {
     setCreateDefaultColumnId(columnId);
@@ -113,6 +139,7 @@ export default function BoardPage() {
       {/* Board Header & Controls */}
       <BoardHeader
         boardName={boardData?.name || 'TaskFlow Board'}
+        onOpenSelectBoardModal={() => setIsSelectBoardModalOpen(true)}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         priorityFilter={priorityFilter}
@@ -140,7 +167,25 @@ export default function BoardPage() {
         ))}
       </div>
 
-      {/* Modals */}
+      {/* Select Board Dialog Modal */}
+      <SelectBoardModal
+        isOpen={isSelectBoardModalOpen}
+        onClose={() => setIsSelectBoardModalOpen(false)}
+        boardsList={boardsList}
+        currentBoardId={boardData?.id || activeBoardId}
+        onSelectBoard={handleSelectBoard}
+        onOpenCreateBoardModal={() => setIsCreateBoardModalOpen(true)}
+      />
+
+      {/* Create Board Modal */}
+      <CreateBoardModal
+        isOpen={isCreateBoardModalOpen}
+        onClose={() => setIsCreateBoardModalOpen(false)}
+        onSubmit={handleCreateBoard}
+        isLoading={createBoardMutation.isPending}
+      />
+
+      {/* Task Modals */}
       <CreateTaskModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}

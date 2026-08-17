@@ -6,6 +6,7 @@ import { useUsersQuery } from '@/hooks/useUsers';
 import { useHotkeys } from '@/hooks/useHotkeys';
 import { Sidebar } from './components/Sidebar';
 import { DashboardOverview } from './components/DashboardOverview';
+import { BoardsDirectory } from './components/BoardsDirectory';
 import { UserProfile } from './components/UserProfile';
 import { UsersDirectory } from './components/UsersDirectory';
 import BoardPage from '../Board/BoardPage';
@@ -80,7 +81,9 @@ export default function Dashboard() {
         <Routes>
           <Route index element={<DashboardOverview />} />
           <Route path="overview" element={<DashboardOverview />} />
+          <Route path="boards" element={<BoardsDirectory />} />
           <Route path="board" element={<BoardPage />} />
+          <Route path="board/:boardId" element={<BoardPage />} />
           <Route
             path="profile"
             element={

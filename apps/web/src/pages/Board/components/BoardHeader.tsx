@@ -1,4 +1,4 @@
-import { Plus, Search, Filter, ArrowUpDown } from 'lucide-react';
+import { Plus, Search, Filter, ArrowUpDown, FolderKanban } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -13,6 +13,7 @@ export type SortOption = 'created-desc' | 'created-asc' | 'priority-desc' | 'pri
 
 interface BoardHeaderProps {
   boardName?: string;
+  onOpenSelectBoardModal?: () => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   priorityFilter: string;
@@ -26,6 +27,7 @@ const PRIORITIES = ['All', 'High', 'Medium', 'Low'] as const;
 
 export function BoardHeader({
   boardName = 'TaskFlow Board',
+  onOpenSelectBoardModal,
   searchQuery,
   setSearchQuery,
   priorityFilter,
@@ -36,20 +38,18 @@ export function BoardHeader({
 }: BoardHeaderProps) {
   return (
     <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-6 border-b border-border">
-      {/* Title & Badge */}
+      {/* Clean Title */}
       <div className="space-y-1">
-        <div className="flex items-center gap-2.5">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">{boardName}</h1>
-        </div>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">{boardName}</h1>
         <p className="text-xs text-muted-foreground">
           Manage your tasks, track progress across columns, and organize priorities.
         </p>
       </div>
 
-      {/* Controls: Search, Priority Filters, Sort Select, Add Task */}
+      {/* Controls: Search, Priority Filters, Sort Select, Select Board, Add Task */}
       <div className="flex flex-wrap items-center gap-3">
         {/* Search Input */}
-        <div className="relative w-full sm:w-60">
+        <div className="relative w-full sm:w-52">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
           <Input
             type="text"
@@ -108,6 +108,19 @@ export function BoardHeader({
             </SelectContent>
           </Select>
         </div>
+
+        {/* Select / Switch Board Dialog Trigger */}
+        {onOpenSelectBoardModal && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onOpenSelectBoardModal}
+            className="h-9 px-3.5 text-xs font-medium gap-1.5 border-border cursor-pointer bg-card hover:bg-muted shadow-xs"
+          >
+            <FolderKanban className="size-4 text-primary" />
+            <span>Select Board</span>
+          </Button>
+        )}
 
         {/* Add Task Trigger */}
         <Button

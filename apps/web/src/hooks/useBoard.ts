@@ -47,6 +47,82 @@ export interface MoveTaskPayload {
   columnId: string;
 }
 
+export interface BoardSummary {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  columnsCount?: number;
+  tasksCount?: number;
+}
+
+/**
+ * Query hook for listing all boards
+ */
+export function useBoardsListQuery() {
+  return useQuery<BoardSummary[]>({
+    queryKey: ['boards'],
+    queryFn: async () => {
+      const response = await api.get('/boards');
+      return response.data.data;
+    },
+    refetchOnWindowFocus: true,
+  });
+}
+
+/**
+ * Mutation hook to create a new board
+ */
+export function useCreateBoardMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: { name: string }) => {
+      const response = await api.post('/boards', payload);
+      return response.data.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['boards'] });
+      queryClient.invalidateQueries({ queryKey: ['analytics'] });
+    },
+  });
+}
+
+/**
+ * Mutation hook to update / rename a board
+ */
+export function useUpdateBoardMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, name }: { id: string; name: string }) => {
+      const response = await api.patch(`/boards/${id}`, { name });
+      return response.data.data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['boards'] });
+      queryClient.invalidateQueries({ queryKey: ['board', variables.id] });
+      queryClient.invalidateQueries({ queryKey: ['analytics'] });
+    },
+  });
+}
+
+/**
+ * Mutation hook to delete a board
+ */
+export function useDeleteBoardMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (boardId: string) => {
+      const response = await api.delete(`/boards/${boardId}`);
+      return response.data.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['boards'] });
+      queryClient.invalidateQueries({ queryKey: ['board'] });
+      queryClient.invalidateQueries({ queryKey: ['analytics'] });
+    },
+  });
+}
+
 /**
  * Query hook for board details with nested columns and tasks
  */

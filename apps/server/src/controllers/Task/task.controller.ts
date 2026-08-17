@@ -82,7 +82,7 @@ export async function createTask(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    const taskId = `task_${crypto.randomUUID()}`;
+    const taskId = crypto.randomUUID();
     const [newTask] = await db
       .insert(tasks)
       .values({

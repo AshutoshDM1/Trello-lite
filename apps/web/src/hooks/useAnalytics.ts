@@ -8,6 +8,13 @@ export interface ColumnBreakdownItem {
   percentage: number;
 }
 
+export interface StagePriorityItem {
+  stage: 'To Do' | 'In Progress' | 'Done';
+  priority: 'Low' | 'Medium' | 'High';
+  count: number;
+  percentage: number;
+}
+
 export interface PriorityBreakdownItem {
   priority: 'High' | 'Medium' | 'Low';
   count: number;
@@ -21,15 +28,20 @@ export interface OverviewAnalyticsData {
   highPriorityTasks: number;
   completionRate: number;
   columnBreakdown: ColumnBreakdownItem[];
+  stagePriorityBreakdown: StagePriorityItem[];
   priorityBreakdown: PriorityBreakdownItem[];
   activeTeamMembers: number;
 }
 
-export function useOverviewAnalyticsQuery() {
+export function useOverviewAnalyticsQuery(boardId: string = 'all') {
   return useQuery<OverviewAnalyticsData>({
-    queryKey: ['analytics', 'overview'],
+    queryKey: ['analytics', 'overview', boardId],
     queryFn: async () => {
-      const response = await api.get('/analytics/overview');
+      const url =
+        boardId && boardId !== 'all'
+          ? `/analytics/overview?boardId=${boardId}`
+          : '/analytics/overview';
+      const response = await api.get(url);
       return response.data.data;
     },
     refetchOnWindowFocus: true,

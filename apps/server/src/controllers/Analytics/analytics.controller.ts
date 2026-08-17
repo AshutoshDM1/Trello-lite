@@ -1,74 +1,101 @@
 import type { Request, Response } from 'express';
-import { eq, sql } from 'drizzle-orm';
+import { eq, sql, inArray, desc, asc } from 'drizzle-orm';
 import db from '../../utils/db.js';
-import { tasks, columns, user } from '../../db/schema.js';
+import { boards, tasks, columns, user } from '../../db/schema.js';
 
 /**
  * GET /api/v1/analytics/overview
- * Fetch workspace task metrics, column breakdown, priority distribution, and user count.
+ * Fetch workspace task metrics, 9-bar stage & priority breakdown, and user count.
  */
-export async function getOverviewAnalytics(_req: Request, res: Response): Promise<void> {
+export async function getOverviewAnalytics(req: Request, res: Response): Promise<void> {
   try {
-    // 1. Fetch total tasks count
-    const [tasksCountRes] = await db.select({ count: sql<number>`count(*)::int` }).from(tasks);
-    const totalTasks = Number(tasksCountRes?.count || 0);
+    const requestedBoardId = req.query.boardId as string | undefined;
 
-    // 2. Fetch all columns to identify Done / In Progress / To Do columns
-    const columnsList = await db.select().from(columns).orderBy(columns.position);
+    // 1. Identify target boards (if 'all' or omitted, query across all boards)
+    let targetBoardIds: string[] = [];
+    if (requestedBoardId && requestedBoardId !== 'all' && requestedBoardId !== '*') {
+      targetBoardIds = requestedBoardId
+        .split(',')
+        .map((id) => id.trim())
+        .filter(Boolean);
+    }
 
-    // Fetch all tasks for distribution calculations
-    const allTasks = await db.select().from(tasks);
+    // 2. Fetch columns (filtered by target boards if specified, or all columns)
+    const boardColumns =
+      targetBoardIds.length > 0
+        ? await db.select().from(columns).where(inArray(columns.boardId, targetBoardIds))
+        : await db.select().from(columns);
 
-    // Identify 'Done' column(s) by name case-insensitive
-    const doneColumnIds = columnsList
-      .filter(
-        (c) => c.name.toLowerCase().includes('done') || c.name.toLowerCase().includes('completed'),
-      )
-      .map((c) => c.id);
+    const columnIds = boardColumns.map((c) => c.id);
 
-    // Identify 'In Progress' column(s) by name
-    const inProgressColumnIds = columnsList
-      .filter(
-        (c) => c.name.toLowerCase().includes('progress') || c.name.toLowerCase().includes('doing'),
-      )
-      .map((c) => c.id);
+    // 3. Fetch tasks belonging to these columns
+    const boardTasks =
+      columnIds.length > 0
+        ? await db.select().from(tasks).where(inArray(tasks.columnId, columnIds))
+        : [];
 
-    // Count metrics
-    const completedTasks = allTasks.filter((t) => doneColumnIds.includes(t.columnId)).length;
-    const inProgressTasks = allTasks.filter((t) => inProgressColumnIds.includes(t.columnId)).length;
-    const highPriorityTasks = allTasks.filter((t) => t.priority === 'High').length;
+    const totalTasks = boardTasks.length;
+
+    // Helper to map columnId to standard stage name
+    const getStageName = (colId: string): 'To Do' | 'In Progress' | 'Done' => {
+      const col = boardColumns.find((c) => c.id === colId);
+      if (!col) return 'To Do';
+      const name = col.name.toLowerCase();
+      if (name.includes('done') || name.includes('completed')) return 'Done';
+      if (name.includes('progress') || name.includes('doing')) return 'In Progress';
+      return 'To Do';
+    };
+
+    // Calculate core KPI metrics
+    const completedTasks = boardTasks.filter((t) => getStageName(t.columnId) === 'Done').length;
+    const inProgressTasks = boardTasks.filter(
+      (t) => getStageName(t.columnId) === 'In Progress',
+    ).length;
+    const highPriorityTasks = boardTasks.filter((t) => t.priority === 'High').length;
 
     const completionRate =
       totalTasks > 0 ? Number(((completedTasks / totalTasks) * 100).toFixed(1)) : 0;
 
-    // 3. Column Stage Breakdown
-    const columnBreakdown = columnsList.map((col) => {
-      const colTaskCount = allTasks.filter((t) => t.columnId === col.id).length;
-      const percentage =
-        totalTasks > 0 ? Number(((colTaskCount / totalTasks) * 100).toFixed(1)) : 0;
+    // 9-Bar Stage & Priority Breakdown (To Do, In Progress, Done x Low, Medium, High)
+    const stages = ['To Do', 'In Progress', 'Done'] as const;
+    const priorities = ['Low', 'Medium', 'High'] as const;
+
+    const stagePriorityBreakdown: Array<{
+      stage: 'To Do' | 'In Progress' | 'Done';
+      priority: 'Low' | 'Medium' | 'High';
+      count: number;
+      percentage: number;
+    }> = [];
+
+    stages.forEach((stage) => {
+      const stageTasks = boardTasks.filter((t) => getStageName(t.columnId) === stage);
+      priorities.forEach((priority) => {
+        const count = stageTasks.filter((t) => t.priority === priority).length;
+        const percentage = totalTasks > 0 ? Number(((count / totalTasks) * 100).toFixed(1)) : 0;
+        stagePriorityBreakdown.push({
+          stage,
+          priority,
+          count,
+          percentage,
+        });
+      });
+    });
+
+    // Column Stage Breakdown
+    const columnBreakdown = stages.map((stage) => {
+      const count = boardTasks.filter((t) => getStageName(t.columnId) === stage).length;
+      const percentage = totalTasks > 0 ? Number(((count / totalTasks) * 100).toFixed(1)) : 0;
       return {
-        columnId: col.id,
-        name: col.name,
-        count: colTaskCount,
+        columnId: stage.toLowerCase().replace(/\s+/g, '-'),
+        name: stage,
+        count,
         percentage,
       };
     });
 
-    // 4. Priority Breakdown
-    const priorityCounts: Record<'High' | 'Medium' | 'Low', number> = {
-      High: 0,
-      Medium: 0,
-      Low: 0,
-    };
-
-    allTasks.forEach((t) => {
-      if (t.priority && priorityCounts[t.priority as 'High' | 'Medium' | 'Low'] !== undefined) {
-        priorityCounts[t.priority as 'High' | 'Medium' | 'Low'] += 1;
-      }
-    });
-
-    const priorityBreakdown = (['High', 'Medium', 'Low'] as const).map((p) => {
-      const count = priorityCounts[p];
+    // Priority Breakdown
+    const priorityBreakdown = priorities.map((p) => {
+      const count = boardTasks.filter((t) => t.priority === p).length;
       const percentage = totalTasks > 0 ? Number(((count / totalTasks) * 100).toFixed(1)) : 0;
       return {
         priority: p,
@@ -77,7 +104,7 @@ export async function getOverviewAnalytics(_req: Request, res: Response): Promis
       };
     });
 
-    // 5. Active Team Members count
+    // Active Team Members count
     const [usersCountRes] = await db.select({ count: sql<number>`count(*)::int` }).from(user);
     const activeTeamMembers = Number(usersCountRes?.count || 0);
 
@@ -90,6 +117,7 @@ export async function getOverviewAnalytics(_req: Request, res: Response): Promis
         highPriorityTasks,
         completionRate,
         columnBreakdown,
+        stagePriorityBreakdown,
         priorityBreakdown,
         activeTeamMembers,
       },
