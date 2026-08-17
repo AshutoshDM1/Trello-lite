@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, Edit2, Trash2, ArrowRightLeft, GripVertical } from 'lucide-react';
+import { Calendar, Edit2, Trash2, ArrowRightLeft } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { TaskItem, ColumnItem } from '@/hooks/useBoard';
@@ -44,7 +44,7 @@ export function TaskCard({
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
       draggable
-      onDragStart={(e: React.DragEvent) => {
+      onDragStartCapture={(e: React.DragEvent) => {
         setIsDragging(true);
         e.dataTransfer.setData(
           'text/plain',
@@ -52,7 +52,7 @@ export function TaskCard({
         );
         e.dataTransfer.effectAllowed = 'move';
       }}
-      onDragEnd={() => {
+      onDragEndCapture={() => {
         setIsDragging(false);
       }}
       className={`group relative bg-card hover:bg-card/95 border rounded-xl p-4 shadow-xs hover:shadow-md transition-all space-y-3 cursor-grab active:cursor-grabbing ${

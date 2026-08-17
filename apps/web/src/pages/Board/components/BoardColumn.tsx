@@ -80,7 +80,7 @@ export function BoardColumn({
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className={`flex flex-col w-full md:w-80 lg:w-110 shrink-0 rounded-2xl p-4 space-y-4 max-h-[calc(100vh-12rem)] min-h-[500px] overflow-hidden transition-colors duration-150 ${
+      className={`flex flex-col w-full md:w-80 lg:w-110 shrink-0 rounded-2xl p-4 space-y-4 max-h-[calc(100vh-12rem)] min-h-125 overflow-hidden transition-colors duration-150 ${
         isDragOver
           ? 'bg-primary/10 border-2 border-dashed border-primary ring-2 ring-primary/20'
           : 'bg-muted/20 dark:bg-muted/10 border border-border/70'

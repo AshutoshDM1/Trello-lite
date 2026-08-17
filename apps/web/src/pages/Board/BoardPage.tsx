@@ -82,7 +82,7 @@ export default function BoardPage() {
 
   if (isError) {
     return (
-      <div className="min-h-[400px] w-full flex flex-col items-center justify-center border border-dashed border-destructive/30 bg-destructive/5 rounded-2xl p-8 text-center space-y-4">
+      <div className="min-h-100 w-full flex flex-col items-center justify-center border border-dashed border-destructive/30 bg-destructive/5 rounded-2xl p-8 text-center space-y-4">
         <div className="p-3 rounded-full bg-destructive/10 text-destructive border border-destructive/20">
           <AlertCircle className="size-6" />
         </div>
