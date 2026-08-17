@@ -4,11 +4,19 @@ import { Plus, Inbox } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TaskCard } from './TaskCard';
 import type { ColumnItem, TaskItem } from '@/hooks/useBoard';
+import type { SortOption } from './BoardHeader';
+
+const PRIORITY_WEIGHT: Record<string, number> = {
+  High: 3,
+  Medium: 2,
+  Low: 1,
+};
 
 interface BoardColumnProps {
   column: ColumnItem;
   columns: ColumnItem[];
   searchQuery: string;
+  sortBy?: SortOption;
   onEditTask: (task: TaskItem) => void;
   onDeleteTask: (task: TaskItem) => void;
   onMoveTask: (taskId: string, targetColumnId: string) => void;
@@ -20,6 +28,7 @@ export function BoardColumn({
   column,
   columns,
   searchQuery,
+  sortBy = 'created-desc',
   onEditTask,
   onDeleteTask,
   onMoveTask,
@@ -28,15 +37,33 @@ export function BoardColumn({
 }: BoardColumnProps) {
   const [isDragOver, setIsDragOver] = useState(false);
 
-  // Filter tasks client-side by search query
-  const filteredTasks = (column.tasks || []).filter((t) => {
-    if (!searchQuery.trim()) return true;
-    const query = searchQuery.toLowerCase();
-    return (
-      t.title.toLowerCase().includes(query) ||
-      (t.description && t.description.toLowerCase().includes(query))
-    );
-  });
+  // Filter and Sort tasks client-side
+  const filteredTasks = [...(column.tasks || [])]
+    .filter((t) => {
+      if (!searchQuery.trim()) return true;
+      const query = searchQuery.toLowerCase();
+      return (
+        t.title.toLowerCase().includes(query) ||
+        (t.description && t.description.toLowerCase().includes(query))
+      );
+    })
+    .sort((a, b) => {
+      if (sortBy === 'created-asc') {
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      }
+      if (sortBy === 'priority-desc') {
+        const diff = (PRIORITY_WEIGHT[b.priority] ?? 0) - (PRIORITY_WEIGHT[a.priority] ?? 0);
+        if (diff !== 0) return diff;
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }
+      if (sortBy === 'priority-asc') {
+        const diff = (PRIORITY_WEIGHT[a.priority] ?? 0) - (PRIORITY_WEIGHT[b.priority] ?? 0);
+        if (diff !== 0) return diff;
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }
+      // Default: created-desc (Newest First)
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
 
   const columnColorIndicator =
     column.position === 0
@@ -80,9 +107,9 @@ export function BoardColumn({
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className={`flex flex-col w-full md:w-80 lg:w-110 shrink-0 rounded-2xl p-4 space-y-4 max-h-[calc(100vh-12rem)] min-h-125 overflow-hidden transition-colors duration-150 ${
+      className={`flex flex-col w-full md:w-80 lg:w-110 shrink-0 rounded-xl p-4 space-y-4 max-h-[calc(100vh-12rem)] min-h-125 overflow-hidden transition-colors duration-150 ${
         isDragOver
-          ? 'bg-primary/10 border-2 border-dashed border-primary ring-2 ring-primary/20'
+          ? 'bg-primary/10 border border-dashed border-primary/20 '
           : 'bg-muted/20 dark:bg-muted/10 border border-border/70'
       }`}
     >

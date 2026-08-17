@@ -1,6 +1,15 @@
-import { Plus, Search, Filter } from 'lucide-react';
+import { Plus, Search, Filter, ArrowUpDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
+export type SortOption = 'created-desc' | 'created-asc' | 'priority-desc' | 'priority-asc';
 
 interface BoardHeaderProps {
   boardName?: string;
@@ -8,6 +17,8 @@ interface BoardHeaderProps {
   setSearchQuery: (query: string) => void;
   priorityFilter: string;
   setPriorityFilter: (priority: string) => void;
+  sortBy: SortOption;
+  setSortBy: (sort: SortOption) => void;
   onOpenCreateModal: () => void;
 }
 
@@ -19,10 +30,12 @@ export function BoardHeader({
   setSearchQuery,
   priorityFilter,
   setPriorityFilter,
+  sortBy,
+  setSortBy,
   onOpenCreateModal,
 }: BoardHeaderProps) {
   return (
-    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-border">
+    <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-6 border-b border-border">
       {/* Title & Badge */}
       <div className="space-y-1">
         <div className="flex items-center gap-2.5">
@@ -33,10 +46,10 @@ export function BoardHeader({
         </p>
       </div>
 
-      {/* Controls: Search, Priority Filters, Add Task */}
+      {/* Controls: Search, Priority Filters, Sort Select, Add Task */}
       <div className="flex flex-wrap items-center gap-3">
         {/* Search Input */}
-        <div className="relative w-full sm:w-64">
+        <div className="relative w-full sm:w-60">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
           <Input
             type="text"
@@ -66,6 +79,34 @@ export function BoardHeader({
               </button>
             );
           })}
+        </div>
+
+        {/* Sort by Select */}
+        <div className="flex items-center">
+          <Select value={sortBy} onValueChange={(val) => setSortBy(val as SortOption)}>
+            <SelectTrigger className="h-9 min-w-44 text-xs bg-muted/30 border-border focus:bg-background cursor-pointer">
+              <div className="flex items-center gap-1.5 text-muted-foreground">
+                <ArrowUpDown className="size-3.5 shrink-0" />
+                <span className="text-foreground font-medium">
+                  <SelectValue placeholder="Sort by" />
+                </span>
+              </div>
+            </SelectTrigger>
+            <SelectContent align="end">
+              <SelectItem className="text-xs" value="created-desc">
+                Date: Newest First
+              </SelectItem>
+              <SelectItem className="text-xs" value="created-asc">
+                Date: Oldest First
+              </SelectItem>
+              <SelectItem className="text-xs" value="priority-desc">
+                Priority: High → Low
+              </SelectItem>
+              <SelectItem className="text-xs" value="priority-asc">
+                Priority: Low → High
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Add Task Trigger */}

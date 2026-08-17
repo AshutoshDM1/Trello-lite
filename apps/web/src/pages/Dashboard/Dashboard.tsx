@@ -76,7 +76,7 @@ export default function Dashboard() {
       />
 
       {/* Main Content Pane with React Router Routes */}
-      <main className="flex-1 min-w-0 h-full bg-background p-6 md:p-10 overflow-y-auto">
+      <main className="flex-1 min-w-0 h-full bg-background p-4 md:p-8  overflow-y-auto">
         <Routes>
           <Route index element={<DashboardOverview />} />
           <Route path="overview" element={<DashboardOverview />} />

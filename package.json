@@ -4,6 +4,7 @@
   "description": "Taskflow - A simple task management application",
   "scripts": {
     "dev": "pnpm --filter web --filter server --parallel dev",
+    "build": "pnpm --filter web --filter server --parallel build",
     "format": "prettier --write .",
     "prepare": "husky",
     "lint": "pnpm --filter @config/eslint lint",

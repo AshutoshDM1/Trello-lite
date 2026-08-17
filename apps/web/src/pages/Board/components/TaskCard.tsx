@@ -57,8 +57,8 @@ export function TaskCard({
       }}
       className={`group relative bg-card hover:bg-card/95 border rounded-xl p-4 shadow-xs hover:shadow-md transition-all space-y-3 cursor-grab active:cursor-grabbing ${
         isDragging
-          ? 'opacity-40 border-dashed border-primary scale-98 ring-2 ring-primary/20'
-          : 'border-border/80 hover:border-primary/40'
+          ? 'opacity-0 border-dashed border-primary/30 scale-95'
+          : 'border-border/50 hover:border-primary/10'
       }`}
     >
       {/* Header: Priority & Quick Actions */}
